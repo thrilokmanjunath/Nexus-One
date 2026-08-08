@@ -105,7 +105,6 @@ export default function PipelinesPage() {
             onConnect={onConnect}
             fitView
             className="bg-slate-950"
-            theme="dark"
           >
             <Background color="#334155" gap={24} />
             <Controls className="bg-slate-800 border-slate-700 fill-white" />
