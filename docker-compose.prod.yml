@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-nexus_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-nexus_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-nexus_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-nexus_user}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --requirepass ${REDIS_PASSWORD:-nexus_redis_pass}
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-nexus_user}:${POSTGRES_PASSWORD:-nexus_pass}@db:5432/${POSTGRES_DB:-nexus_db}
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-nexus_redis_pass}@redis:6379/0
+      - SECRET_KEY=${SECRET_KEY:-your-super-secret-production-key}
+      - ENVIRONMENT=production
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      - NEXT_PUBLIC_API_URL=https://api.yourdomain.com
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

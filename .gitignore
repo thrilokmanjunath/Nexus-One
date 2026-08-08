@@ -1,0 +1,33 @@
+# Node / Frontend
+node_modules/
+.next/
+out/
+build/
+.npm/
+npm-debug.log*
+
+# Python / Backend
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+venv/
+.venv/
+env/
+.env
+.env.*
+!.env.example
+*.db
+*.sqlite3
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Project specific
+archive/
+brain/
