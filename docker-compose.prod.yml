@@ -27,7 +27,7 @@ services:
     environment:
       - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-nexus_user}:${POSTGRES_PASSWORD:-nexus_pass}@db:5432/${POSTGRES_DB:-nexus_db}
       - REDIS_URL=redis://:${REDIS_PASSWORD:-nexus_redis_pass}@redis:6379/0
-      - SECRET_KEY=${SECRET_KEY:-your-super-secret-production-key}
+      - SECRET_KEY=${SECRET_KEY}
       - ENVIRONMENT=production
     depends_on:
       db:

@@ -12,7 +12,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.user import User
 from app.db.database import get_async_session
 
-SECRET = "super-secret-key-change-in-production"
+import os
+SECRET = os.getenv("SECRET_KEY")
+if not SECRET:
+    raise ValueError("SECRET_KEY environment variable is mandatory and not set")
 
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):
     yield SQLAlchemyUserDatabase(session, User)
